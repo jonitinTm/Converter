@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Convierte — Conversor de audio, vídeo e imagen sin subir archivos</title>
+<meta name="description" content="Convierte MP3, WAV, MP4, WebM, GIF, PNG, JPG, WebP, PDF y más directamente en tu navegador. Sin subidas, sin registro.">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500&display=swap">
+<!-- PUBLICIDAD: pega aquí el <script> de AdSense (o tu red) cuando te aprueben la cuenta -->
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0e0e0e;--surface:#161616;--border:#2a2a2a;--text:#f0f0f0;--muted:#8a8a8a;--accent:#39ff14;--warn:#ff6b35;--r:4px;--fh:'Space Grotesk',sans-serif;--fb:'Inter',sans-serif}
+html,body{background:var(--bg);color:var(--text)}
+body{font-family:var(--fb);font-size:14px;line-height:1.5;min-height:100vh;display:flex;flex-direction:column}
+.header{display:flex;align-items:center;justify-content:space-between;padding:0 32px;height:56px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;background:var(--bg)}
+.logo{font-family:var(--fh);font-size:1.1rem;font-weight:700;letter-spacing:-.02em}.logo span{color:var(--accent)}
+.badge{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:500;color:var(--accent);border:1px solid var(--accent);border-radius:20px;padding:3px 10px}
+.badge::before{content:'';width:6px;height:6px;background:var(--accent);border-radius:50%}
+.shell{display:flex;flex:1}
+.sidebar{width:210px;flex-shrink:0;border-right:1px solid var(--border);padding:24px 0;position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto}
+.sl{font-size:11px;font-weight:700;color:var(--muted);padding:12px 20px 6px}
+.sb{width:100%;text-align:left;background:none;border:0;cursor:pointer;padding:8px 20px;color:var(--muted);font:13px var(--fb);display:flex;gap:8px;align-items:center}
+.sb:hover{color:var(--text);background:var(--surface)}.sb.active{color:var(--accent);background:rgba(57,255,20,.06)}
+.sb i{font-style:normal;width:18px;text-align:center}
+.main{flex:1;padding:32px 40px;max-width:820px;min-width:0}
+.ad{border:1px dashed var(--border);color:#444;font-size:11px;text-align:center;padding:6px;margin:0 0 24px;min-height:90px;display:flex;align-items:center;justify-content:center;border-radius:var(--r)}
+.ad+*{margin-top:0}.ad.b{margin:24px 0 0}
+h1{font-family:var(--fh);font-size:2rem;font-weight:700;letter-spacing:-.03em;line-height:1.1;margin-bottom:8px}
+.th{margin-bottom:28px}.th p{color:var(--muted);font-size:13px}.lt{font-size:11px;color:var(--accent);margin-top:8px}
+.row{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;margin-bottom:16px}
+.g{display:flex;flex-direction:column;gap:4px}.g label{font-size:11px;color:var(--muted);font-weight:500}
+.sel,.num{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:var(--r);font:13px var(--fb);min-width:110px}
+.sel{cursor:pointer}.num{width:110px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.dz{border:1.5px dashed var(--border);border-radius:var(--r);padding:44px 24px;text-align:center;position:relative;background:var(--surface);transition:.2s;margin-top:8px}
+.dz:hover,.dz.over{border-color:var(--accent);background:rgba(57,255,20,.04)}
+.dz input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.di{font-size:34px;margin-bottom:10px}.dt{font-family:var(--fh);font-size:1.1rem;font-weight:600;margin-bottom:4px}.ds{color:var(--muted);font-size:12px}
+.fin{display:none;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 16px;margin-top:12px}
+.fin.v{display:flex}.fnm{font-weight:500;word-break:break-all}.fsz{font-size:11px;color:var(--muted)}
+.x{background:none;border:0;color:var(--muted);cursor:pointer;font-size:18px}.x:hover{color:var(--warn)}
+.pw{display:none;margin-top:16px}.pw.v{display:block}
+.pbg{background:var(--border);border-radius:2px;height:3px;margin-bottom:8px}.pb{height:3px;background:var(--accent);border-radius:2px;width:0;transition:width .3s}.pl{font-size:11px;color:var(--muted)}
+.go{margin-top:20px;width:100%;padding:14px;background:var(--accent);color:#000;border:0;border-radius:var(--r);font:700 15px var(--fh);cursor:pointer}
+.go:disabled{background:var(--border);color:var(--muted);cursor:not-allowed}
+.msg{display:none;margin-top:16px;padding:12px 14px;border-radius:var(--r);font-size:13px}.msg.v{display:block}
+.msg.ok{background:rgba(57,255,20,.1);border:1px solid rgba(57,255,20,.3);color:var(--accent)}
+.msg.err{background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.3);color:var(--warn)}
+.dl{display:none;margin-top:12px;justify-content:center;padding:13px;background:var(--surface);border:1px solid var(--accent);border-radius:var(--r);color:var(--text);font:600 14px var(--fh);text-decoration:none}.dl.v{display:flex}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{display:flex;flex-direction:column;justify-content:flex-start;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:22px;cursor:pointer;text-align:left;color:var(--text);font:inherit}
+.card:hover{border-color:var(--accent)}.card i{font-style:normal;font-size:26px;display:block;margin-bottom:8px}
+.card b{font:700 1rem var(--fh);display:block;margin-bottom:4px}.card span{color:var(--muted);font-size:12px;word-spacing:2px}
+.foot{padding:16px 32px;border-top:1px solid var(--border);color:var(--muted);font-size:12px}
+@media(max-width:720px){.shell{flex-direction:column}.sidebar{width:100%;height:auto;position:static;display:flex;overflow-x:auto;padding:0;border:0;border-bottom:1px solid var(--border)}.sl{display:none}.sb{width:auto;white-space:nowrap;padding:12px 14px}.main{padding:24px 16px}.grid{grid-template-columns:1fr}.header{padding:0 16px}h1{font-size:1.6rem}}
+</style>
+</head>
+<body>
+<header class="header"><div class="logo">convierte<span>.</span></div><div class="badge">100% local — sin subidas</div></header>
+<div class="shell"><nav class="sidebar" id="nav"></nav><main class="main" id="main"></main></div>
+<footer class="foot">Tus archivos se procesan en tu dispositivo y nunca se envían a ningún servidor.</footer>
+
+<script>
+const AD='<div class="ad">Publicidad <!-- pega aquí tu bloque <ins class="adsbygoogle"> --></div>';
+const $=i=>document.getElementById(i);
+const A=['mp3','wav','ogg','opus','flac','aac','m4a','wma','aiff','ac3','mp2'];
+const V=['mp4','webm','mkv','mov','avi','flv','wmv','mpg','ts','m4v','gif'];
+const I=['png','jpg','webp','bmp','gif','tiff','ico','pdf'];
+const SC=[['','Original'],['1080','1080p'],['720','720p'],['480','480p'],['360','360p']];
+const MAX=2*1024**3, WARN=700*1024**2;
+const AC={mp3:'libmp3lame',ogg:'libvorbis',opus:'libopus',aac:'aac',m4a:'aac',wma:'wmav2',ac3:'ac3',mp2:'mp2',flac:'flac',wav:'pcm_s16le',aiff:'pcm_s16be'};
+
+const aArgs=(f,o)=>{const a=['-vn','-c:a',AC[f]];if(o.br&&!['wav','flac','aiff'].includes(f))a.push('-b:a',o.br+'k');return a};
+function vArgs(f,o){
+  const crf=+o.crf||23,q=Math.max(2,Math.round(crf/5)),a=[];
+  if(f==='gif')return ['-vf',`fps=12,scale=${o.sc?Math.round(o.sc*16/9):480}:-2:flags=lanczos`,'-an','-loop','0'];
+  if(o.sc)a.push('-vf',`scale=-2:${o.sc}`);
+  if(f==='webm')a.push('-c:v','libvpx','-crf',crf,'-b:v','2M','-deadline','realtime','-cpu-used','5','-c:a','libvorbis');
+  else if(f==='avi')a.push('-c:v','mpeg4','-q:v',q,'-c:a','libmp3lame');
+  else if(f==='wmv')a.push('-c:v','wmv2','-q:v',q,'-c:a','wmav2');
+  else if(f==='mpg')a.push('-c:v','mpeg2video','-q:v',q,'-c:a','mp2');
+  else{a.push('-c:v','libx264','-preset','veryfast','-crf',crf,'-pix_fmt','yuv420p','-c:a','aac');if(['mp4','mov','m4v'].includes(f))a.push('-movflags','+faststart')}
+  return a;
+}
+
+const T={
+ audio:{g:'Audio',ic:'♪',t:'Convertir audio',d:'Convierte entre formatos de audio directamente en tu navegador. También acepta vídeo como origen.',btn:'Convertir',outs:A,acc:'audio/*,video/*,.opus,.wma,.aiff,.flac,.ac3,.mp2,.m4a',hint:'MP3, WAV, OGG, FLAC, AAC, OPUS, M4A, WMA…',
+  opts:[{id:'br',l:'Bitrate (kbps)',v:[['','Auto'],['64','64'],['128','128'],['192','192'],['256','256'],['320','320']],def:'192'}],
+  run:(fl,f,o)=>ff(fl,aArgs(f,o),f)},
+ extract:{g:'Audio',ic:'↑',t:'Extraer audio de vídeo',d:'Saca la pista de audio de cualquier vídeo.',btn:'Extraer audio',outs:['mp3','wav','flac','aac','m4a','ogg','opus'],acc:'video/*,.mkv,.avi,.flv,.wmv,.mpg,.ts',hint:'MP4, WebM, MKV, MOV, AVI…',
+  opts:[{id:'br',l:'Bitrate (kbps)',v:[['','Auto'],['128','128'],['192','192'],['320','320']],def:'192'}],
+  run:(fl,f,o)=>ff(fl,aArgs(f,o),f)},
+ video:{g:'Vídeo',ic:'▶',t:'Convertir vídeo',d:'Cambia el formato de tus vídeos o conviértelos en GIF. Los archivos grandes pueden tardar varios minutos.',btn:'Convertir vídeo',outs:V,acc:'video/*,.mkv,.avi,.flv,.wmv,.mpg,.ts,.m4v,.gif',hint:'MP4, WebM, MKV, MOV, AVI, FLV, GIF…',
+  opts:[{id:'crf',l:'Calidad (CRF, menor = mejor)',n:1,def:23,min:0,max:51},{id:'sc',l:'Resolución',v:SC}],
+  run:(fl,f,o)=>ff(fl,vArgs(f,o),f)},
+ compress:{g:'Vídeo',ic:'◈',t:'Comprimir vídeo',d:'Reduce el tamaño del archivo manteniendo la mayor calidad posible.',btn:'Comprimir vídeo',outs:['mp4'],acc:'video/*,.mkv,.avi,.flv,.wmv,.mpg,.ts',hint:'MP4, WebM, MKV, MOV, AVI…',
+  opts:[{id:'crf',l:'Nivel de compresión',v:[['18','Mínima (mejor calidad)'],['23','Media (recomendado)'],['28','Alta (más pequeño)'],['32','Máxima']],def:'23'},{id:'sc',l:'Resolución',v:SC}],
+  run:(fl,f,o)=>ff(fl,[...vArgs('mp4',o),'-b:a','128k'],f)},
+ image:{g:'Imagen',ic:'▣',t:'Convertir imagen',d:'PNG, JPG, WebP, GIF, BMP, TIFF, ICO, SVG y PDF. Lo que tu navegador no lee (p. ej. TIFF) se decodifica con el motor de FFmpeg.',btn:'Convertir imagen',outs:I,acc:'image/*,.heic,.tif,.tiff,.ico,.bmp,.svg,.avif,.webp',hint:'PNG, JPG, WebP, AVIF, GIF, BMP, TIFF, SVG…',
+  opts:[{id:'q',l:'Calidad JPG/WebP (1-100)',n:1,def:90,min:1,max:100},{id:'w',l:'Ancho máximo (px, vacío = original)',n:1,def:'',min:1,max:16000}],
+  run:img}
+};
+
+// ── FFmpeg (se descarga solo la primera vez que hace falta) ──
+let ffm,ffP,onProg,setP=()=>{};
+const CDNS=['https://cdn.jsdelivr.net/npm/','https://unpkg.com/'],PK='@ffmpeg/ffmpeg@0.12.10/dist/umd/',CK='@ffmpeg/core@0.12.6/dist/umd/';
+// Descarga con espejos de respaldo y devuelve una URL blob (evita el bloqueo de Workers cross-origin)
+async function get(path,mime,cb){
+  let err;
+  for(const c of CDNS){try{
+    const r=await fetch(c+path);if(!r.ok)throw new Error(r.status);
+    const len=+r.headers.get('content-length')||0,rd=r.body.getReader(),ch=[];let n=0;
+    for(;;){const{done,value}=await rd.read();if(done)break;ch.push(value);n+=value.length;if(cb&&len)cb(Math.min(1,n/len))}
+    return URL.createObjectURL(new Blob(ch,{type:mime}));
+  }catch(e){err=e}}
+  throw err;
+}
+const W0=window.Worker;
+function loadFF(){
+  return ffP||(ffP=(async()=>{
+    setP(3,'Descargando el motor de conversión (~30 MB, solo la primera vez)…');
+    const lib=await get(PK+'ffmpeg.js','text/javascript');
+    await new Promise((ok,ko)=>{const s=document.createElement('script');s.src=lib;s.onload=ok;s.onerror=()=>ko(new Error('No se pudo cargar el motor'));document.head.appendChild(s)});
+    ffm=new FFmpegWASM.FFmpeg();
+    ffm.on('progress',({progress})=>onProg&&onProg(progress));
+    // El worker clásico se crea desde un blob local: los Workers cross-origin están bloqueados
+    const wk=await get(PK+'814.ffmpeg.js','text/javascript'),W=window.Worker;
+    window.Worker=function(){return new W(wk)};
+    await ffm.load({
+      coreURL:await get(CK+'ffmpeg-core.js','text/javascript'),
+      wasmURL:await get(CK+'ffmpeg-core.wasm','application/wasm',p=>setP(3+p*12,`Descargando el motor… ${Math.round(p*100)}%`))
+    });
+  })().catch(e=>{ffP=null;throw e}).finally(()=>{window.Worker=W0}));
+}
+async function ff(file,args,ext){
+  await loadFF();
+  const inExt=((file.name||'x.bin').split('.').pop()||'bin').toLowerCase().replace(/\W/g,'')||'bin',inn='input.'+inExt,out='out.'+ext;
+  await ffm.createDir('/in').catch(()=>{});
+  await ffm.mount('WORKERFS',{blobs:[{name:inn,data:file}]},'/in'); // lee el archivo sin copiarlo a memoria
+  onProg=p=>{const c=Math.max(0,Math.min(p,1));setP(16+c*82,`Procesando… ${Math.round(c*100)}%`)};
+  try{
+    const r=await ffm.exec(['-y','-i','/in/'+inn,...args.map(String),out]);
+    if(r!==0)throw new Error('ffmpeg '+r);
+    const d=await ffm.readFile(out);await ffm.deleteFile(out).catch(()=>{});
+    return new Blob([d]);
+  }finally{onProg=null;await ffm.unmount('/in').catch(()=>{})}
+}
+
+// ── Imagen ──
+async function dec(b){
+  if(/svg/.test(b.type)||/\.svg$/i.test(b.name||'')){const i=new Image();i.src=URL.createObjectURL(new Blob([b],{type:'image/svg+xml'}));await i.decode();return i}
+  return createImageBitmap(b);
+}
+const cvBlob=(c,t,q)=>new Promise(r=>c.toBlob(r,t,q));
+async function heic(f){
+  if(!window.heic2any){const u=await get('heic2any@0.0.4/dist/heic2any.min.js','text/javascript'),e=document.createElement('script');e.src=u;await new Promise((ok,ko)=>{e.onload=ok;e.onerror=ko;document.head.appendChild(e)})}
+  const r=await heic2any({blob:f,toType:'image/png'});return Array.isArray(r)?r[0]:r;
+}
+async function img(file,f,o){
+  let s;setP(10,'Leyendo imagen…');
+  try{s=await dec(file)}catch{
+    try{
+      if(!/hei[cf]/i.test(file.name+file.type))throw 0;
+      setP(12,'Cargando decodificador HEIC…');s=await dec(await heic(file));
+    }catch{
+      try{s=await dec(await ff(file,['-frames:v','1'],'png'))}
+      catch{throw new Error('No se pudo leer esta imagen. Prueba con otro archivo o formato de origen.')}
+    }
+  }
+  let w=s.width||1024,h=s.height||1024;const mw=+o.w;
+  if(f==='ico'){const k=Math.min(1,256/Math.max(w,h));w=Math.round(w*k);h=Math.round(h*k)}
+  else if(mw&&w>mw){h=Math.round(h*mw/w);w=mw}
+  const c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');
+  if(f==='jpg'||f==='pdf'){x.fillStyle='#fff';x.fillRect(0,0,w,h)}
+  x.drawImage(s,0,0,w,h);
+  const q=Math.min(100,Math.max(1,+o.q||90))/100;
+  setP(60,'Codificando…');
+  if(f==='png')return cvBlob(c,'image/png');
+  if(f==='jpg')return cvBlob(c,'image/jpeg',q);
+  if(f==='webp')return cvBlob(c,'image/webp',q);
+  if(['bmp','gif','tiff'].includes(f))return ff(await cvBlob(c,'image/png'),['-frames:v','1'],f);
+  if(f==='ico'){
+    const b=new Uint8Array(await(await cvBlob(c,'image/png')).arrayBuffer()),d=new DataView(new ArrayBuffer(22));
+    d.setUint16(2,1,true);d.setUint16(4,1,true);d.setUint8(6,w>=256?0:w);d.setUint8(7,h>=256?0:h);
+    d.setUint16(10,1,true);d.setUint16(12,32,true);d.setUint32(14,b.length,true);d.setUint32(18,22,true);
+    return new Blob([d,b],{type:'image/x-icon'});
+  }
+  // PDF: una página con la imagen JPEG incrustada
+  const j=new Uint8Array(await(await cvBlob(c,'image/jpeg',q)).arrayBuffer()),P=[],off=[];let n=0;
+  const add=v=>{const u=typeof v==='string'?new TextEncoder().encode(v):v;P.push(u);n+=u.length};
+  const cs=`q ${w} 0 0 ${h} 0 0 cm /I Do Q`;
+  add('%PDF-1.4\n');
+  off[1]=n;add('1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n');
+  off[2]=n;add('2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n');
+  off[3]=n;add(`3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 ${w} ${h}]/Contents 4 0 R/Resources<</XObject<</I 5 0 R>>>>>>endobj\n`);
+  off[4]=n;add(`4 0 obj<</Length ${cs.length}>>stream\n${cs}\nendstream endobj\n`);
+  off[5]=n;add(`5 0 obj<</Type/XObject/Subtype/Image/Width ${w}/Height ${h}/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length ${j.length}>>stream\n`);add(j);add('\nendstream endobj\n');
+  const xr=n;let t='xref\n0 6\n0000000000 65535 f \n';for(let i=1;i<6;i++)t+=String(off[i]).padStart(10,'0')+' 00000 n \n';
+  add(t+`trailer<</Size 6/Root 1 0 R>>\nstartxref\n${xr}\n%%EOF`);
+  return new Blob(P,{type:'application/pdf'});
+}
+
+// ── UI ──
+let cur,file,url;
+const fmt=b=>b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':b<1073741824?(b/1048576).toFixed(1)+' MB':(b/1073741824).toFixed(2)+' GB';
+function nav(){
+  let h='<div class="sl">Inicio</div><button class="sb" data-p="home"><i>⊞</i>Todos los formatos</button>',g='';
+  for(const [k,t] of Object.entries(T)){if(t.g!==g){g=t.g;h+=`<div class="sl">${g}</div>`}h+=`<button class="sb" data-p="${k}"><i>${t.ic}</i>${t.t}</button>`}
+  $('nav').innerHTML=h;
+  $('nav').onclick=e=>{const b=e.target.closest('.sb');if(b)open(b.dataset.p)};
+}
+function msg(type,txt){const m=$('msg');m.className='msg'+(type?' v '+type:'');m.textContent=txt||''}
+setP=(p,l)=>{if(!$('pw'))return;$('pw').className='pw v';$('pb').style.width=p+'%';$('pl').textContent=l};
+function reset(){msg('');if($('pw'))$('pw').className='pw';$('dl').className='dl'}
+function setFile(f){
+  if(!f)return;reset();
+  if(f.size>MAX){file=null;$('fin').className='fin';$('go').disabled=true;return msg('err',`El archivo (${fmt(f.size)}) supera el máximo de 2 GB que admite el navegador.`)}
+  file=f;$('fn').textContent=f.name;$('fs').textContent=fmt(f.size);$('fin').className='fin v';$('go').disabled=false;
+  if(f.size>WARN&&cur!=='image')msg('err','Archivo muy grande: la conversión puede fallar en móviles o equipos con poca memoria RAM.');
+}
+function open(id){
+  cur=id;file=null;
+  document.querySelectorAll('.sb').forEach(b=>b.classList.toggle('active',b.dataset.p===id));
+  const m=$('main');
+  if(id==='home'){
+    m.innerHTML=AD+`<div class="th"><h1>Convierte archivos.<br>Sin subir nada.</h1><p>Todo se procesa en tu navegador. Tus archivos nunca llegan a ningún servidor.</p></div><div class="grid">`+
+      Object.entries(T).map(([k,t])=>`<button class="card" data-p="${k}"><i>${t.ic}</i><b>${t.t}</b><span>${t.outs.map(o=>o.toUpperCase()).join(' · ')}</span></button>`).join('')+'</div>';
+    m.onclick=e=>{const c=e.target.closest('.card');if(c)open(c.dataset.p)};return;
+  }
+  m.onclick=null;const t=T[id];
+  m.innerHTML=AD+`<div class="th"><h1>${t.t}</h1><p>${t.d}</p><div class="lt">⬡ Procesamiento 100% local — sin subidas</div></div>
+  <div class="row"><div class="g"><label for="out">Convertir a</label><select class="sel" id="out">${t.outs.map(o=>`<option value="${o}">${o.toUpperCase()}</option>`).join('')}</select></div>
+  ${t.opts.map(o=>`<div class="g"><label for="o_${o.id}">${o.l}</label>`+(o.n?`<input class="num" type="number" id="o_${o.id}" value="${o.def}" min="${o.min}" max="${o.max}">`:`<select class="sel" id="o_${o.id}">${o.v.map(([v,l])=>`<option value="${v}"${v===o.def?' selected':''}>${l}</option>`).join('')}</select>`)+'</div>').join('')}</div>
+  <div class="dz" id="dz"><input type="file" id="fi" accept="${t.acc}"><div class="di">${t.ic}</div><div class="dt">Arrastra tu archivo aquí</div><div class="ds">o haz clic para seleccionar — ${t.hint}</div></div>
+  <div class="fin" id="fin"><div><div class="fnm" id="fn"></div><div class="fsz" id="fs"></div></div><button class="x" id="fx" aria-label="Quitar archivo">✕</button></div>
+  <div class="pw" id="pw"><div class="pbg"><div class="pb" id="pb"></div></div><div class="pl" id="pl"></div></div>
+  <div class="msg" id="msg"></div><a class="dl" id="dl">⬇ Descargar archivo convertido</a>
+  <button class="go" id="go" disabled>${t.btn}</button><div class="ad b">Publicidad</div>`;
+  const dz=$('dz');
+  $('fi').onchange=e=>setFile(e.target.files[0]);
+  dz.ondragover=e=>{e.preventDefault();dz.classList.add('over')};dz.ondragleave=()=>dz.classList.remove('over');
+  dz.ondrop=e=>{e.preventDefault();dz.classList.remove('over');setFile(e.dataTransfer.files[0])};
+  $('fx').onclick=()=>{file=null;$('fi').value='';$('fin').className='fin';$('go').disabled=true;reset()};
+  $('go').onclick=run;
+}
+async function run(){
+  if(!file)return;const t=T[cur],f=$('out').value,o={},go=$('go');
+  t.opts.forEach(x=>o[x.id]=$('o_'+x.id).value);
+  go.disabled=true;go.textContent='Convirtiendo…';reset();setP(5,'Preparando…');
+  try{
+    const blob=await t.run(file,f,o);
+    if(!blob||!blob.size)throw new Error('El resultado está vacío.');
+    if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob);
+    const name=file.name.replace(/\.[^.]+$/,'')+'.'+f,dl=$('dl');
+    dl.href=url;dl.download=name;dl.className='dl v';
+    setP(100,'¡Listo!');msg('ok',`Conversión completada: ${name} (${fmt(blob.size)})`);
+  }catch(e){
+    console.error(e);$('pw').className='pw';
+    msg('err',location.protocol==='file:'?'Abre la web desde un servidor (https://…) y no como archivo local: el motor de audio/vídeo no arranca desde file://.':e.message&&!/^ffmpeg|Failed|network|fetch/i.test(e.message)?e.message:'No se pudo convertir. Comprueba el archivo, tu conexión (la primera vez se descarga el motor) y la memoria disponible.');
+  }
+  go.disabled=false;go.textContent=t.btn;
+}
+nav();open('home');
+</script>
+</body>
+</html>
